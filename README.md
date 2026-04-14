@@ -21,6 +21,6 @@ pip install pystray pillow screeninfo
 I reccomend to put .bat file on your STREAM DECK so that you can easily start the pomodoro timer.
 
 ```Bash
-Python pomorodo.py
+python pomorodo.py
 ```
 
