@@ -126,8 +126,11 @@ class PomodoroTaskbarApp:
 
         self.root = tk.Tk()
         self.root.title("Pomodoro - Work - Remaining 25:00")
-        self.root.geometry("300x145")
+        self.root.geometry("320x210")
+        self.root.minsize(320, 210)
+        self.root.maxsize(320, 210)
         self.root.resizable(False, False)
+        self.root.configure(bg="#111111")
 
         self.overlay = BreakOverlayManager(self.root)
 
@@ -143,8 +146,6 @@ class PomodoroTaskbarApp:
         self.root.after(200, self._tick)
 
     def _build_ui(self):
-        self.root.configure(bg="#111111")
-
         self.status_label = tk.Label(
             self.root,
             text="Work Session",
@@ -169,10 +170,18 @@ class PomodoroTaskbarApp:
         self.pause_button = tk.Button(
             button_frame,
             text="Pause",
-            width=10,
+            width=12,
             command=self.toggle_pause,
         )
-        self.pause_button.grid(row=0, column=0, padx=4, pady=4)
+        self.pause_button.grid(row=0, column=0, padx=5, pady=5)
+
+        self.hide_button = tk.Button(
+            button_frame,
+            text="Hide",
+            width=12,
+            command=self.minimize_to_taskbar,
+        )
+        self.hide_button.grid(row=0, column=1, padx=5, pady=5)
 
         self.restart_cycle_button = tk.Button(
             button_frame,
@@ -180,7 +189,7 @@ class PomodoroTaskbarApp:
             width=12,
             command=self.restart_cycle,
         )
-        self.restart_cycle_button.grid(row=0, column=1, padx=4, pady=4)
+        self.restart_cycle_button.grid(row=1, column=0, padx=5, pady=5)
 
         self.restart_work_button = tk.Button(
             button_frame,
@@ -188,23 +197,15 @@ class PomodoroTaskbarApp:
             width=12,
             command=self.restart_work,
         )
-        self.restart_work_button.grid(row=1, column=0, padx=4, pady=4)
-
-        self.hide_button = tk.Button(
-            button_frame,
-            text="Hide",
-            width=10,
-            command=self.minimize_to_taskbar,
-        )
-        self.hide_button.grid(row=1, column=1, padx=4, pady=4)
+        self.restart_work_button.grid(row=1, column=1, padx=5, pady=5)
 
         self.quit_button = tk.Button(
-            self.root,
+            button_frame,
             text="Quit",
-            width=10,
+            width=12,
             command=self.quit_app,
         )
-        self.quit_button.pack(pady=(0, 10))
+        self.quit_button.grid(row=2, column=0, columnspan=2, padx=5, pady=(5, 0))
 
     def _format_mmss(self, total_sec: int) -> str:
         minutes = total_sec // 60
@@ -363,7 +364,14 @@ class PomodoroTaskbarApp:
     def quit_app(self):
         self.running = False
         self.overlay.hide()
-        self.root.destroy()
+        try:
+            self.root.quit()
+        except Exception:
+            pass
+        try:
+            self.root.destroy()
+        except Exception:
+            pass
 
     def _switch_to_break(self):
         self.mode = "break"
